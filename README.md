@@ -1,6 +1,8 @@
-<h1>Students Perfomance</h1>
+<h1>Students Performance</h1>
 
 <p>The goal of this project is to predict a student s math score based on his attributes. The dataset was taken from Kaggle. You can access  it clicking <a href="https://www.kaggle.com/datasets/spscientist/students-performance-in-exams">here</a>.</p>
+
+<video src="frontend/public/students-performance.mp4" />
 
 <h2>Tecnologies</h2>
 <div><img src="https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white" />
