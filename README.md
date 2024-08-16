@@ -32,7 +32,9 @@ npm run dev
 
 To run the algorithm and the database, first you will need to install the <a href="https://www.python.org/">Python Interpreter</a>.
 
-With Python installed, it's needed to create a virtual environment to isolate all the dependencies in the project folder. To make it easer, just run in the project root directory (on Linux):
+With Python installed, it's needed to create a virtual environment to isolate all the dependencies in the project folder. To make it easer, just run in the project root directory:
+
+`Linux`
 
 ```bash
 python3 -m venv venv
@@ -42,6 +44,26 @@ To activate the virtual env, run:
 
 ```bash
 source venv/bin/activate
+```
+
+`Windows`
+
+```bash
+python -m venv venv
+```
+
+To activate the virtual env, run:
+
+**cmd**
+
+```bash
+.\venv\Scripts\activate.bat
+```
+
+**PowerShell**
+
+```bash
+.\venv\Scripts\activate.ps1
 ```
 
 **Running SQL Database**
