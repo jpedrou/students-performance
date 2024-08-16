@@ -58,6 +58,8 @@ To effectively build the database tables, run:
 python manage.py migrate
 ```
 
+Then, you're ready to run the Django project:
+
 ```bash
 python manage.py runserver
 ```
