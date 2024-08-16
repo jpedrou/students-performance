@@ -3,7 +3,8 @@ import pandas as pd
 import json
 import os
 
-from django.http import JsonResponse
+from django.db import transaction
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from time import sleep
 
@@ -16,14 +17,14 @@ MODEL_PATH = os.path.join(ROOT_PATH, "modeling/model_pipeline.pickle")
 
 @csrf_exempt
 def make_predictions(request):
-    sleep(2)
+    sleep(1.5)
     if request.method == "POST":
         body = json.loads(request.body)
 
         try:
 
             # User Inputs
-            sex = body.get("sex")
+            sex = body.get("gender")
             race = body.get("race")
             parental_level_of_education = body.get("parental_level_of_education")
             lunch = body.get("lunch")
@@ -49,17 +50,19 @@ def make_predictions(request):
             prediction = model_pipeline.predict(input_data)
             prediction = round(prediction[0], 2)
 
-            # # Saving the data
-            # prediction_results = PredictionResults()
-            # prediction_results.sex = sex
-            # prediction_results.race = race
-            # prediction_results.parental_level_of_education = parental_level_of_education
-            # prediction_results.lunch = lunch
-            # prediction_results.test_preparation_course = test_preparation_course
-            # prediction_results.reading_score = reading_score
-            # prediction_results.writing_score = writing_score
-            # prediction_results.math_score_predicton = prediction
-            # prediction_results.save()
+            # Saving the data
+            with transaction.atomic():
+                prediction_results = PredictionResults(
+                    sex=sex,
+                    race=race,
+                    parental_level_of_education=parental_level_of_education,
+                    lunch=lunch,
+                    test_preparation_course=test_preparation_course,
+                    reading_score=reading_score,
+                    writing_score=writing_score,
+                    math_score_predicton=prediction,
+                )
+                prediction_results.save()
 
             return JsonResponse({"success": True, "prediction": prediction})
 

@@ -5,12 +5,14 @@ const dialog = ref(false);
 const valid = ref(false);
 const prediction = ref(null);
 
+let controller = new AbortController();
+
 const formData = ref({
   gender: null,
   race: null,
   parental_level_of_education: null,
   lunch: null,
-  test_preparation_couse: null,
+  test_preparation_course: null,
   reading_score: null,
   writing_score: null,
 });
@@ -27,14 +29,31 @@ function validateAndRound(value) {
 async function Predict() {
   prediction.value = null;
   dialog.value = true;
-  prediction.value = await PostData("makepredictions");
+  if (controller) {
+    controller.abort();
+    controller = new AbortController();
+  }
+
+  prediction.value = await PostData("makepredictions", controller.signal);
 }
 
-async function PostData(path) {
+function CloseDialog() {
+  dialog.value = false;
+  if (controller) {
+    controller.abort();
+    controller = new AbortController();
+  }
+}
+
+async function PostData(path, signal) {
   try {
     const response = await fetch("http://127.0.0.1:8000/api/" + path, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(formData.value),
+      signal: signal,
     });
     if (!response.ok) {
       throw new Error(`Response status: ${response.status}`);
@@ -42,7 +61,11 @@ async function PostData(path) {
     const json = await response.json();
     return json.prediction;
   } catch (error) {
-    console.error(error.message);
+    if (error.name === "AbortError") {
+      console.log("Request was aborted");
+    } else {
+      console.error("Fetch error: ", error.message);
+    }
   }
 }
 
@@ -112,7 +135,7 @@ watch(
         :items="['none', 'completed']"
         :rules="[(v) => !!v || 'Item is required']"
         variant="solo"
-        v-model="formData.test_preparation_couse"
+        v-model="formData.test_preparation_course"
       ></v-select>
 
       <v-text-field
@@ -167,7 +190,7 @@ watch(
           <v-card-actions>
             <v-spacer></v-spacer>
 
-            <v-btn text="Close" @click="dialog = false"></v-btn>
+            <v-btn text="Close" @click="CloseDialog"></v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>

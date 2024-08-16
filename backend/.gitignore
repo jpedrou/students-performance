@@ -1,0 +1,4 @@
+api/migrations/__init__.py
+api/migrations/0001_initial.py
+
+__pycache__
